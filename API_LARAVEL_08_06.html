@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Material Didático: Criando uma API simples com Laravel, SQLite e Postman</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f7ff;
+            color: #1e2a3a;
+            line-height: 1.5;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            padding: 2rem 2rem 3rem 2rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            background: linear-gradient(135deg, #0f2b3d, #1e4a6e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+            border-left: 6px solid #2c7da0;
+            padding-left: 1.2rem;
+        }
+
+        .subtitulo {
+            color: #2c5a7a;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px dashed #bcd4e6;
+            padding-bottom: 0.75rem;
+        }
+
+        h2 {
+            background: #e6f2f9;
+            padding: 0.6rem 1rem;
+            border-radius: 40px;
+            font-size: 1.5rem;
+            margin: 1.8rem 0 1rem 0;
+            color: #0b3b4f;
+            display: inline-block;
+        }
+
+        h3 {
+            margin: 1.5rem 0 0.8rem 0;
+            color: #1f6392;
+            border-left: 4px solid #2c7da0;
+            padding-left: 0.8rem;
+        }
+
+        .card-dica {
+            background: #fef9e3;
+            border-left: 6px solid #f4b942;
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .code-block {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 1.2rem;
+            border-radius: 20px;
+            overflow-x: auto;
+            font-family: 'Courier New', 'Fira Code', monospace;
+            font-size: 0.9rem;
+            margin: 1rem 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .code-block span.comment {
+            color: #7dd3fc;
+        }
+
+        .code-block span.keyword {
+            color: #facc15;
+        }
+
+        .inline-code {
+            background: #eef2f5;
+            font-family: monospace;
+            padding: 0.2rem 0.4rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #c7254e;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.2rem 0;
+            background: #ffffff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        th {
+            background: #2c7da0;
+            color: white;
+            padding: 10px 12px;
+            font-weight: 600;
+        }
+
+        td {
+            border: 1px solid #cbd5e1;
+            padding: 8px 12px;
+        }
+
+        .btn-exemplo {
+            background: #1f6392;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 4px 12px;
+            font-size: 0.8rem;
+            font-family: monospace;
+        }
+
+        footer {
+            margin-top: 3rem;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #5c7c8f;
+            border-top: 1px solid #cbdbe2;
+            padding-top: 1.8rem;
+        }
+
+        @media (max-width: 680px) {
+            .container {
+                padding: 1.5rem;
+            }
+            h1 {
+                font-size: 1.7rem;
+            }
+            .code-block {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>📡 Criando uma API simples com Laravel + SQLite</h1>
+    <div class="subtitulo">✏️ Material didático para Ensino Médio e Técnico — Testando com Postman (sem autenticação)</div>
+
+    <div class="card-dica">
+        💡 <strong>Objetivo da aula:</strong> Entender o que é uma API, construir uma API RESTful completa (CRUD) usando Laravel, banco SQLite e testar todos os endpoints no Postman. <br>
+        ✅ <strong>Pré-requisitos:</strong> PHP (>=8.1), Composer, SQLite3 instalado, Postman instalado (ou extensão navegador).
+    </div>
+
+    <h2>🔰 1. O que é uma API? Por que usar Laravel e SQLite?</h2>
+    <p>Uma API (Application Programming Interface) permite que sistemas conversem entre si. No contexto web, uma API RESTful recebe requisições HTTP (GET, POST, PUT, DELETE) e devolve respostas em JSON.<br>
+    O <strong>Laravel</strong> é um framework PHP poderoso e elegante, que facilita criação de rotas, controllers e migrations. O <strong>SQLite</strong> é um banco de dados relacional leve, excelente para estudos e projetos pequenos — tudo armazenado em um único arquivo.</p>
+
+    <h2>🛠️ 2. Criando o projeto Laravel e configurando SQLite</h2>
+    <h3>2.1 Criar novo projeto (via Composer)</h3>
+    <div class="code-block">
+        composer create-project laravel/laravel minha-api-laravel<br>
+        cd minha-api-laravel
+    </div>
+    <p>Após criar, acesse a pasta.</p>
+
+    <h3>2.2 Configurar SQLite</h3>
+    <p>🔹 No arquivo <span class="inline-code">.env</span> (raiz do projeto), altere as linhas de banco de dados:</p>
+    <div class="code-block">
+        DB_CONNECTION=sqlite<br>
+        # DB_HOST, DB_PORT, DB_DATABASE, DB_USERNAME, DB_PASSWORD podem ser comentados ou removidos<br><br>
+        # Certifique-se que não há linhas conflitando com mysql/pgsql.
+    </div>
+    <p>🔹 Crie um arquivo vazio: <span class="inline-code">database/database.sqlite</span> (Linux/Mac: <span class="inline-code">touch database/database.sqlite</span> ; Windows: basta criar um arquivo em branco com esse nome).<br>
+    🔹 Pronto! O Laravel usará esse arquivo como banco.</p>
+
+    <h2>🗄️ 3. Criando Migration e Model (Tabela "produtos")</h2>
+    <p>Vamos construir uma API de gerenciamento de produtos (apenas para exemplo).</p>
+    <h3>3.1 Gerar migration e model</h3>
+    <div class="code-block">
+        php artisan make:model Produto -m
+    </div>
+    <p>O comando acima cria o model <span class="inline-code">app/Models/Produto.php</span> e uma migration em <span class="inline-code">database/migrations/</span>.</p>
+
+    <h3>3.2 Editar migration (definir colunas)</h3>
+    <p>Abra o arquivo migration gerado (ex: <span class="inline-code">2025_xx_xx_xxxxxx_create_produtos_table.php</span>) e edite o método <span class="inline-code">up()</span>:</p>
+    <div class="code-block">
+        public function up(): void<br>
+        {<br>
+            Schema::create('produtos', function (Blueprint $table) {<br>
+                $table->id();<br>
+                $table->string('nome', 100);<br>
+                $table->text('descricao')->nullable();<br>
+                $table->decimal('preco', 8, 2);<br>
+                $table->integer('quantidade')->default(0);<br>
+                $table->timestamps();<br>
+            });<br>
+        }
+    </div>
+
+    <h3>3.3 Executar migração (criar tabela)</h3>
+    <div class="code-block">
+        php artisan migrate
+    </div>
+    <p>Verifique se não há erros. A tabela <span class="inline-code">produtos</span> foi criada no SQLite!</p>
+
+    <h2>🌐 4. Criando o Controller da API (sem autenticação)</h2>
+    <p>Vamos gerar um controller específico para API RESTful:</p>
+    <div class="code-block">
+        php artisan make:controller Api/ProdutoController --api
+    </div>
+    <p>O arquivo será criado em <span class="inline-code">app/Http/Controllers/Api/ProdutoController.php</span>.</p>
+    <p>Edite o conteúdo com os métodos básicos: index (listar), store (criar), show (buscar um), update (atualizar) e destroy (deletar). Código completo:</p>
+    <div class="code-block">
+        &lt;?php<br><br>
+        namespace App\Http\Controllers\Api;<br><br>
+        use App\Models\Produto;<br>
+        use Illuminate\Http\Request;<br>
+        use App\Http\Controllers\Controller;<br><br>
+        class ProdutoController extends Controller<br>
+        {<br>
+            // Listar todos os produtos<br>
+            public function index()<br>
+            {<br>
+                $produtos = Produto::all();<br>
+                return response()->json($produtos);<br>
+            }<br><br>
+            // Criar novo produto<br>
+            public function store(Request $request)<br>
+            {<br>
+                $request->validate([<br>
+                    'nome' => 'required|string|max:100',<br>
+                    'preco' => 'required|numeric|min:0',<br>
+                    'quantidade' => 'integer|min:0',<br>
+                    'descricao' => 'nullable|string'<br>
+                ]);<br><br>
+                $produto = Produto::create($request->all());<br>
+                return response()->json($produto, 201);<br>
+            }<br><br>
+            // Exibir um produto específico<br>
+            public function show($id)<br>
+            {<br>
+                $produto = Produto::find($id);<br>
+                if(!$produto) {<br>
+                    return response()->json(['message' => 'Produto não encontrado'], 404);<br>
+                }<br>
+                return response()->json($produto);<br>
+            }<br><br>
+            // Atualizar produto<br>
+            public function update(Request $request, $id)<br>
+            {<br>
+                $produto = Produto::find($id);<br>
+                if(!$produto) {<br>
+                    return response()->json(['message' => 'Produto não encontrado'], 404);<br>
+                }<br><br>
+                $request->validate([<br>
+                    'nome' => 'sometimes|string|max:100',<br>
+                    'preco' => 'sometimes|numeric|min:0',<br>
+                    'quantidade' => 'sometimes|integer|min:0',<br>
+                    'descricao' => 'nullable|string'<br>
+                ]);<br><br>
+                $produto->update($request->all());<br>
+                return response()->json($produto);<br>
+            }<br><br>
+            // Deletar produto<br>
+            public function destroy($id)<br>
+            {<br>
+                $produto = Produto::find($id);<br>
+                if(!$produto) {<br>
+                    return response()->json(['message' => 'Produto não encontrado'], 404);<br>
+                }<br>
+                $produto->delete();<br>
+                return response()->json(['message' => 'Produto removido com sucesso']);<br>
+            }<br>
+        }
+    </div>
+
+    <h2>🧭 5. Definindo as Rotas da API (routes/api.php)</h2>
+    <p>Abra o arquivo <span class="inline-code">routes/api.php</span> e registre as rotas RESTful:</p>
+    <div class="code-block">
+        &lt;?php<br><br>
+        use Illuminate\Support\Facades\Route;<br>
+        use App\Http\Controllers\Api\ProdutoController;<br><br>
+        Route::apiResource('produtos', ProdutoController::class);
+    </div>
+    <p>Pronto! Rotas geradas automaticamente:</p>
+    <ul style="margin-left: 1.8rem; margin-bottom: 1rem;">
+        <li><span class="inline-code">GET /api/produtos</span> → index</li>
+        <li><span class="inline-code">POST /api/produtos</span> → store</li>
+        <li><span class="inline-code">GET /api/produtos/{id}</span> → show</li>
+        <li><span class="inline-code">PUT/PATCH /api/produtos/{id}</span> → update</li>
+        <li><span class="inline-code">DELETE /api/produtos/{id}</span> → destroy</li>
+    </ul>
+
+    <h2>🚀 6. Servindo a aplicação Laravel</h2>
+    <p>No terminal, dentro da pasta do projeto, execute:</p>
+    <div class="code-block">
+        php artisan serve
+    </div>
+    <p>O servidor de desenvolvimento será iniciado em <span class="inline-code">http://127.0.0.1:8000</span>. Nossa API estará disponível em <strong>http://127.0.0.1:8000/api/produtos</strong></p>
+    <div class="card-dica">
+        ⚠️ Lembre-se: mantenha o terminal rodando. Para testar no Postman, a API estará ativa localmente.
+    </div>
+
+    <h2>🧪 7. Testando a API no Postman (passo a passo)</h2>
+    <p>Abra o <strong>Postman</strong> (ou o cliente REST de sua preferência). Vamos realizar todos os testes sem autenticação.</p>
+
+    <h3>🔹 7.1 Criar um novo produto (POST)</h3>
+    <ul>
+        <li>Método: <span class="inline-code">POST</span></li>
+        <li>URL: <span class="inline-code">http://127.0.0.1:8000/api/produtos</span></li>
+        <li>Headers: <span class="inline-code">Content-Type: application/json</span></li>
+        <li>Body (JSON):</li>
+    </ul>
+    <div class="code-block">
+        {<br>
+            "nome": "Teclado Mecânico",<br>
+            "descricao": "Teclado RGB switch marrom",<br>
+            "preco": 199.90,<br>
+            "quantidade": 15<br>
+        }
+    </div>
+    <p>✅ Resposta esperada: <span class="inline-code">201 Created</span> + dados do produto com ID gerado.</p>
+
+    <h3>🔹 7.2 Listar todos os produtos (GET)</h3>
+    <ul>
+        <li>Método: <span class="inline-code">GET</span></li>
+        <li>URL: <span class="inline-code">http://127.0.0.1:8000/api/produtos</span></li>
+    </ul>
+    <p>✅ Retorna array de produtos cadastrados (JSON).</p>
+
+    <h3>🔹 7.3 Buscar um produto por ID (GET)</h3>
+    <ul>
+        <li>Método: <span class="inline-code">GET</span></li>
+        <li>URL: <span class="inline-code">http://127.0.0.1:8000/api/produtos/1</span></li>
+    </ul>
+    <p>✅ Exibe detalhes do produto com id=1. Caso não exista, retorna 404 com mensagem.</p>
+
+    <h3>🔹 7.4 Atualizar um produto (PUT)</h3>
+    <ul>
+        <li>Método: <span class="inline-code">PUT</span> (ou PATCH)</li>
+        <li>URL: <span class="inline-code">http://127.0.0.1:8000/api/produtos/1</span></li>
+        <li>Body JSON (exemplo):</li>
+    </ul>
+    <div class="code-block">
+        {<br>
+            "preco": 179.90,<br>
+            "quantidade": 22<br>
+        }
+    </div>
+    <p>✅ Resposta com os dados atualizados.</p>
+
+    <h3>🔹 7.5 Deletar um produto (DELETE)</h3>
+    <ul>
+        <li>Método: <span class="inline-code">DELETE</span></li>
+        <li>URL: <span class="inline-code">http://127.0.0.1:8000/api/produtos/1</span></li>
+    </ul>
+    <p>✅ Retorna mensagem de sucesso: <span class="inline-code">{"message": "Produto removido com sucesso"}</span>. </p>
+
+    <div class="card-dica">
+        📌 Dica para testar: após deletar, tente buscar o mesmo ID e receberá <span class="inline-code">404</span>. Isso prova que o CRUD está funcionando perfeitamente.
+    </div>
+
+    <h2>📊 8. Exemplo de fluxo completo + prints mentais</h2>
+    <p>Imagine que você cadastrou três produtos com POST, depois chamou o GET /api/produtos e recebeu algo como:</p>
+    <div class="code-block">
+        [<br>
+          {"id":1,"nome":"Mouse Gamer","preco":89.90,"quantidade":10},<br>
+          {"id":2,"nome":"Monitor LED","preco":759.00,"quantidade":3}<br>
+        ]
+    </div>
+    <p>E então fez um PUT no produto 2 alterando o preço. Simples, eficiente e sem necessidade de tokens ou autenticação (perfeito para aprendizado técnico).</p>
+
+    <h2>✅ 9. Resumo do que aprendemos</h2>
+    <table>
+        <thead>
+            <tr><th>Conceito</th><th>Como aplicamos</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>API RESTful</td><td>Rotas seguindo padrão de recursos (produtos)</td></tr>
+            <tr><td>SQLite no Laravel</td><td>Configuração no .env e uso de migration</td></tr>
+            <tr><td>Controller API</td><td>Métodos index, store, show, update, destroy</td></tr>
+            <tr><td>Testes com Postman</td><td>Requisições HTTP para validar CRUD</td></tr>
+            <tr><td>Sem autenticação</td><td>Descomplica o aprendizado inicial</td></tr>
+        </tbody>
+    </table>
+
+    <h2>🔧 10. Possíveis problemas e soluções</h2>
+    <ul style="margin-bottom: 1.2rem;">
+        <li><strong>SQLite não encontrado:</strong> certifique-se que a extensão <span class="inline-code">pdo_sqlite</span> está habilitada no php.ini.</li>
+        <li><strong>Erro 404 no Postman:</strong> confirme se o servidor está rodando (<span class="inline-code">php artisan serve</span>) e a URL está correta.</li>
+        <li><strong>Validação falhando:</strong> verifique os campos obrigatórios como "nome" e "preco" no JSON.</li>
+        <li><strong>Migration não executa:</strong> delete o arquivo <span class="inline-code">database.sqlite</span> (caso corrompido) e recrie.</li>
+    </ul>
+
+    <h2>🏁 Conclusão e próximo passos</h2>
+    <p>Parabéns! Você construiu uma API completa com Laravel e SQLite, testada no Postman, sem autenticação — ideal para portfólio e aprender os fundamentos de back-end. Próximos desafios: adicionar relacionamentos, autenticação com Laravel Sanctum e criar front-end consumindo a API.</p>
+
+    <div class="card-dica" style="background: #e1f5fe;">
+        📝 Exercício para fixação: Crie uma nova tabela "categorias" com migration, relacione com produtos e implemente rotas para listar produtos por categoria. Teste tudo no Postman!
+    </div>
+
+    <footer>
+        ✨ Material elaborado para fins didáticos — Professor Ensino Médio/Técnico | API Laravel + SQLite + Postman ✨
+    </footer>
+</div>
+</body>
+</html>
