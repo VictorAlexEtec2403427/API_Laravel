@@ -38,8 +38,12 @@ return [
     */
 
     'guards' => [
+        'web' => [
+            'driver' => 'session',
+            'provider' => 'users',
+        ],
         'api' => [
-            'driver'   => 'jwt',     // ← era 'token', agora é 'jwt'
+            'driver' => 'jwt',
             'provider' => 'users',
         ],
     ],
