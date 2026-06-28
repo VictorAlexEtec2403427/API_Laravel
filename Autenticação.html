@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Material Didático: Protegendo a API com JWT</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header .subtitle {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+        
+        .content {
+            padding: 40px 30px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            font-size: 1.6em;
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        .objective-box {
+            background: #f8f9fa;
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .objective-box strong {
+            color: #667eea;
+            display: block;
+            margin-bottom: 8px;
+        }
+        
+        .prerequisites {
+            background: #e7f3ff;
+            border-left: 5px solid #2196F3;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .prerequisites strong {
+            color: #2196F3;
+        }
+        
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+        
+        .code-block pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .terminal-command {
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 12px 20px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            border-left: 4px solid #00ff00;
+        }
+        
+        .tip-box {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .tip-box strong {
+            color: #856404;
+        }
+        
+        .warning-box {
+            background: #f8d7da;
+            border-left: 5px solid #dc3545;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .warning-box strong {
+            color: #721c24;
+        }
+        
+        .success-box {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .success-box strong {
+            color: #155724;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        th {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        tr:hover {
+            background: #e9ecef;
+        }
+        
+        .emoji {
+            font-size: 1.2em;
+            margin-right: 5px;
+        }
+        
+        .footer {
+            background: #f8f9fa;
+            padding: 30px;
+            text-align: center;
+            color: #666;
+            border-top: 3px solid #667eea;
+        }
+        
+        .footer strong {
+            color: #667eea;
+        }
+        
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+        
+        ul, ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        .step-number {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        
+        .postman-section {
+            background: #ff6b35;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 Protegendo a API Laravel + SQLite com JWT</h1>
+            <div class="subtitle">✏️ Material didático para Ensino Médio e Técnico — Continuando o projeto da aula anterior</div>
+        </div>
+        
+        <div class="content">
+            <div class="objective-box">
+                <strong>💡 Objetivo da aula:</strong>
+                Entender o que é JWT, instalar o pacote <code>tymon/jwt-auth</code>, criar rotas de login/registro, proteger as rotas de produtos e testar tudo no Postman enviando o token como um "crachá digital".
+            </div>
+            
+            <div class="prerequisites">
+                <strong>✅ Pré-requisitos:</strong> Ter concluído a aula anterior (API de produtos funcionando), PHP >=8.1, Composer, Postman instalado.
+            </div>
+
+            <!-- Seção 1 -->
+            <div class="section">
+                <h2 class="section-title"><span class="emoji">🔰</span> 1. O que é JWT? (Analogia do Crachá)</h2>
+                <p>Imagine que sua escola tem uma portaria. Na primeira aula, você mostra seu RG e a secretária te dá um <strong>CRACHÁ</strong> com seu nome, turma e horário de validade. Durante o dia, você só precisa mostrar o crachá para entrar nas salas — não precisa mostrar o RG de novo.</p>
+                
+                <p style="margin-top: 15px;">O <strong>JWT (JSON Web Token)</strong> funciona exatamente assim:</p>
+                <ul>
+                    <li><span class="emoji">🔹</span> <strong>register/login</strong> = você mostra o RG e ganha um crachá (token).</li>
+                    <li><span class="emoji">🔹</span> <strong>token</strong> = um texto longo (ex.: <code>eyJhbGciOiJIUzI1...</code>) que carrega seus dados.</li>
+                    <li><span class="emoji">🔹</span> <strong>Bearer Token</strong> = é o jeito de "pendurar o crachá" em cada requisição.</li>
+                    <li><span class="emoji">🔹</span> <strong>expiração</strong> = o crachá tem hora para vencer (por padrão 60 minutos).</li>
+                </ul>
+                
+                <div class="success-box">
+                    <strong>Vantagens:</strong> sem sessão no servidor, funciona em apps mobile, APIs e SPAs.
+                </div>
+            </div>
+
+            <!-- Seção 2 -->
+            <div class="section">
+                <h2 class="section-title"><span class="emoji">🛠️</span> 2. Instalando o pacote tymon/jwt-auth</h2>
+                <p>No terminal, dentro da pasta do projeto:</p>
+                <div class="terminal-command">php composer.phar require tymon/jwt-auth:^2.1</div>
+                
+                <p>Depois, publique o arquivo de configuração:</p>
+                <div class="terminal-command">php artisan vendor:publish --provider="Tymon\JWTAuth\Providers\LaravelServiceProvider"</div>
+                
+                <p>E gere a chave secreta (é ela que "assina" o crachá — guarde bem!):</p>
+                <div class="terminal-command">php artisan jwt:secret</div>
+                
+                <div class="success-box">
+                    <strong>✅</strong> Isso cria uma linha <code>JWT_SECRET=xxxxx</code> no seu <code>.env</code>.
+                </div>
+            </div>
+
+            <!-- Seção 3 -->
+            <div class="section">
+                <h2 class="section-title"><span class="emoji">🧬</span> 3. Preparando o Model User para JWT</h2>
+                <p>Abra <code>app/Models/User.php</code> e faça duas mudanças:</p>
+                
+                <h3 style="margin-top: 20px; color: #667eea;"><span class="step-number">3.1</span> Implementar a interface JWTSubject</h3>
+                <div class="code-block"><pre>use Tymon\JWTAuth\Contracts\JWTSubject;
+
+class User extends Authenticatable implements JWTSubject</pre></div>
+                
+                <h3 style="margin-top: 20px; color: #667eea;"><span class="step-number">3.2</span> Adicionar os dois métodos obrigatórios</h3>
+                <div class="code-block"><pre>public function getJWTIdentifier()
+{
+    return $this->getKey(); // retorna o id do usuário
+}
+
+public function getJWTCustomClaims()
+{
+    return []; // aqui você pode adicionar dados extras no token
+}</pre></div>
+                
+                <h3 style="margin-top: 20px; color: #667eea;"><span class="step-number">3.3</span> Garantir que $fillable tenha os campos certos</h3>
+                <div class="code-block"><pre>protected $fillable = ['name', 'email', 'password'];
+protected $hidden = ['password', 'remember_token'];</pre></div>
+                
+                <div class="tip-box">
+                    <strong>📌 Dica do professor:</strong> o password PRECISA estar em <code>$hidden</code> para nunca vazar no JSON.
+                </div>
+            </div>
+
+            <!-- Seção 4 -->
+            <div class="section">
+                <h2 class="section-title"><span class="emoji">🔐</span> 4. Criando o AuthController</h2>
+                <p>Vamos gerar o controller responsável por login, registro e logout:</p>
+                <div class="terminal-command">php artisan make:controller Api/AuthController</div>
+                
+                <p>Conteúdo completo de <code>app/Http/Controllers/Api/AuthController.php</code>:</p>
+                <div class="code-block"><pre>&lt;?php
+namespace App\Http\Controllers\Api;
+
+use App\Models\User;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
+use Tymon\JWTAuth\Facades\JWTAuth;
+
+class AuthController extends Controller
+{
+    // Registrar novo usuário
+    public function register(Request $request)
+    {
+        $request->validate([
+            'name'     =&gt; 'required|string|max:100',
+            'email'    =&gt; 'required|email|unique:users',
+            'password' =&gt; 'required|string|min:6|confirmed',
+        ]);
+
+        $user = User::create([
+            'name'     =&gt; $request-&gt;name,
+            'email'    =&gt; $request-&gt;email,
+            'password' =&gt; Hash::make($request-&gt;password),
+        ]);
+
+        return response()-&gt;json([
+            'message' =&gt; 'Usuário criado com sucesso',
+            'user'    =&gt; $user
+        ], 201);
+    }
+
+    // Login → gera o token (o "crachá")
+    public function login(Request $request)
+    {
+        $credentials = $request-&gt;only('email', 'password');
+
+        if (!$token = JWTAuth::attempt($credentials)) {
+            return response()-&gt;json(['message' =&gt; 'E-mail ou senha inválidos'], 401);
+        }
+
+        return $this-&gt;respondWithToken($token);
+    }
+
+    // Dados do usuário autenticado
+    public function me()
+    {
+        return response()-&gt;json(auth('api')-&gt;user());
+    }
+
+    // Logout → invalida o token
+    public function logout()
+    {
+        auth('api')-&gt;logout();
+        return response()-&gt;json(['message' =&gt; 'Logout realizado com sucesso']);
+    }
+
+    // Refresh → gera um novo token (renova o crachá)
+    public function refresh()
+    {
+        return $this-&gt;respondWithToken(auth('api')-&gt;refresh());
+    }
+
+    // Helper: padroniza a resposta do token
+    protected function respondWithToken($token)
+    {
+        return response()-&gt;json([
+            'access_token' =&gt; $token,
+            'token_type'   =&gt; 'bearer',
+            'expires_in'   =&gt; auth('api')-&gt;factory()-&gt;getTTL() * 60
+        ]);
+    }
+}</pre></div>
+            </div>
+
+            <!-- Seção 5 -->
+            <div class="section">
+                <h2 class="section-title"><span class="emoji">🧭</span> 5. Definindo as rotas (públicas vs. protegidas)</h2>
+                <p>Abra <code>routes/api.php</code> e substitua tudo por:</p>
+                <div class="code-block"><pre>&lt;?php
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ProdutoController;
+
+// 🔓 ROTAS PÚBLICAS (qualquer um pode acessar)
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login',    [AuthController::class, 'login']);
+
+// 🔒 ROTAS PROTEGIDAS (precisa do "crachá" JWT)
+Route::middleware('auth:api')-&gt;group(function () {
+    Route::post('/logout',  [AuthController::class, 'logout']);
+    Route::post('/refresh', [AuthController::class, 'refresh']);
+    Route::get('/me',       [AuthController::class, 'me']);
+
+    Route::apiResource('produtos', ProdutoController::class);
+});</pre></div>
+                
+                <div class="tip-box">
+                    <strong>📌 O que mudou?</strong>
+                    <ul style="margin-top: 10px;">
+                        <li><code>/register</code> e <code>/login</code> continuam abertas.</li>
+                        <li>Tudo que está dentro do <code>middleware('auth:api')</code> exige token.</li>
+                        <li>Se tentar acessar <code>/api/produtos</code> sem token → recebe <strong>401 Unauthorized</strong>.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Seção 6 -->
+            <div class="section">
+                <h2 class="section-title"><span class="emoji">⚙️</span> 6. Ajuste importante no config/auth.php</h2>
+                <p>Abra <code>config/auth.php</code> e altere o guard "api":</p>
+                <div class="code-block"><pre>'guards' =&gt; [
+    'api' =&gt; [
+        'driver'   =&gt; 'jwt',     // ← era 'token', agora é 'jwt'
+        'provider' =&gt; 'users',
+    ],
+],</pre></div>
+                
+                <div class="warning-box">
+                    <strong>⚠️ Atenção:</strong> Sem isso, o Laravel não sabe que deve usar JWT nesse guard.
+                </div>
+            </div>
+
+            <!-- Seção 7 -->
+            <div class="section">
+                <h2 class="section-title"><span class="emoji">🚀</span> 7. Servindo a aplicação</h2>
+                <div class="terminal-command">php artisan serve</div>
+                <p>A API continua em <code>http://127.0.0.1:8000</code>, mas agora com portaria! 🚪</p>
+            </div>
+
+            <!-- Seção 8 -->
+            <div class="section">
+                <h2 class="section-title"><span class="emoji">🧪</span> 8. Testando no Postman — fluxo completo com token</h2>
+                
+                <h3 style="margin-top: 20px; color: #667eea;"><span class="step-number">8.1</span> Registrar um usuário (POST) — PÚBLICO</h3>
+                <p><strong>Método:</strong> POST<br>
+                <strong>URL:</strong> <code>http://127.0.0.1:8000/api/register</code><br>
+                <strong>Body (JSON):</strong></p>
+                <div class="code-block"><pre>{
+    "name": "Maria Silva",
+    "email": "maria@escola.com",
+    "password": "123456",
+    "password_confirmation": "123456"
+}</pre></div>
+                <div class="success-box">✅ Resposta: 201 Created + dados do usuário.</div>
+                
+                <h3 style="margin-top: 20px; color: #667eea;"><span class="step-number">8.2</span> Fazer login (POST) — PÚBLICO</h3>
+                <p><strong>Método:</strong> POST<br>
+                <strong>URL:</strong> <code>http://127.0.0.1:8000/api/login</code><br>
+                <strong>Body (JSON):</strong></p>
+                <div class="code-block"><pre>{
+    "email": "maria@escola.com",
+    "password": "123456"
+}</pre></div>
+                <p><strong>✅ Resposta:</strong></p>
+                <div class="code-block"><pre>{
+    "access_token": "eyJ0eXAiOiJKV1QiLCJhbGci...",
+    "token_type": "bearer",
+    "expires_in": 3600
+}</pre></div>
+                <div class="tip-box">
+                    <strong>📌 COPIE esse access_token</strong> — ele é seu crachá!
+                </div>
+                
+                <h3 style="margin-top: 20px; color: #667eea;"><span class="step-number">8.3</span> Configurar o Postman para usar o token</h3>
+                <p><strong>Opção A (recomendada):</strong> aba <strong>Authorization</strong> → tipo "Bearer Token" → cole o token.</p>
+                <p><strong>Opção B:</strong> aba <strong>Headers</strong> → adicione:</p>
+                <div class="code-block"><pre>Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGci...</pre></div>
+                
+                <h3 style="margin-top: 20px; color: #667eea;"><span class="step-number">8.4</span> Listar produtos (GET) — PROTEGIDO</h3>
+                <p><strong>Método:</strong> GET<br>
+                <strong>URL:</strong> <code>http://127.0.0.1:8000/api/produtos</code></p>
+                <p>✅ <strong>Com token:</strong> retorna a lista.<br>
+                ❌ <strong>Sem token:</strong> retorna <code>{"message": "Unauthenticated."}</code> com status 401.</p>
+                
+                <h3 style="margin-top: 20px; color: #667eea;"><span class="step-number">8.5</span> Criar produto (POST) — PROTEGIDO</h3>
+                <p>Mesmo JSON da aula anterior, mas AGORA com o token configurado.<br>
+                ✅ Funciona normalmente.</p>
+                
+                <h3 style="margin-top: 20px; color: #667eea;"><span class="step-number">8.6</span> Ver quem está logado (GET)</h3>
+                <p><strong>Método:</strong> GET<br>
+                <strong>URL:</strong> <code>http://127.0.0.1:8000/api/me</code><br>
+                ✅ Retorna os dados da Maria (usuário do token).</p>
+                
+                <h3 style="margin-top: 20px; color: #667eea;"><span class="step-number">8.7</span> Renovar o token (POST)</h3>
+                <p><strong>Método:</strong> POST<br>
+                <strong>URL:</strong> <code>http://127.0.0.1:8000/api/refresh</code><br>
+                ✅ Retorna um NOVO access_token (crachá renovado).</p>
+                
+                <h3 style="margin-top: 20px; color: #667eea;"><span class="step-number">8.8</span> Fazer logout (POST)</h3>
+                <p><strong>Método:</strong> POST<br>
+                <strong>URL:</strong> <code>http://127.0.0.1:8000/api/logout</code><br>
+                ✅ Token invalidado. Se tentar usar de novo → 401.</p>
+            </div>
+
+            <!-- Seção 9 -->
+            <div class="section">
+                <h2 class="section-title"><span class="emoji">📊</span> 9. Resumo do que aprendemos</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Conceito</th>
+                            <th>Como aplicamos</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>JWT</strong></td>
+                            <td>Token assinado que substitui sessão</td>
+                        </tr>
+                        <tr>
+                            <td><strong>tymon/jwt-auth</strong></td>
+                            <td>Pacote que implementa JWT no Laravel</td>
+                        </tr>
+                        <tr>
+                            <td><strong>JWTSubject</strong></td>
+                            <td>Interface que o User implementa para "ganhar crachá"</td>
+                        </tr>
+                        <tr>
+                            <td><strong>AuthController</strong></td>
+                            <td>register, login, logout, refresh, me</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Middleware auth:api</strong></td>
+                            <td>Protege rotas — exige token válido</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Bearer Token</strong></td>
+                            <td>Forma de enviar o token no cabeçalho HTTP</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Guard 'jwt'</strong></td>
+                            <td>Configuração em config/auth.php</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Seção 10 -->
+            <div class="section">
+                <h2 class="section-title"><span class="emoji">🔧</span> 10. Possíveis problemas e soluções</h2>
+                <ul>
+                    <li><strong>"Class JWTAuth not found"</strong> → rode <code>composer require tymon/jwt-auth</code> e verifique o namespace.</li>
+                    <li><strong>"Could not create token: Wrong number of segments"</strong> → rode <code>php artisan jwt:secret</code>.</li>
+                    <li><strong>401 em todas as rotas</strong> → confira se o guard 'api' está com driver 'jwt'.</li>
+                    <li><strong>"password_confirmation does not match"</strong> → os dois campos de senha precisam ser idênticos.</li>
+                    <li><strong>Token expirado</strong> → use <code>/api/refresh</code> ou faça login de novo.</li>
+                    <li><strong>Postman continua 401</strong> → verifique se o header é "Authorization" (com z!) e o valor começa com "Bearer " (com espaço).</li>
+                </ul>
+            </div>
+
+            <!-- Conclusão -->
+            <div class="section">
+                <h2 class="section-title"><span class="emoji">🏁</span> Conclusão e próximos passos</h2>
+                <p><strong>Parabéns!</strong> Sua API agora tem portaria: ninguém entra sem crachá. 🎉</p>
+                <p>Você aprendeu o padrão usado por 90% das APIs profissionais do mercado.</p>
+                
+                <h3 style="margin-top: 20px; color: #667eea;">🚀 Próximos desafios:</h3>
+                <ol>
+                    <li>Adicionar campo "role" (admin/user) e criar middleware personalizado.</li>
+                    <li>Implementar "esqueci minha senha" com envio de e-mail.</li>
+                    <li>Consumir essa API em um front-end (React, Vue ou até HTML+JS puro).</li>
+                    <li>Deploy em um servidor real (Render, Hostinger, DigitalOcean).</li>
+                </ol>
+                
+                <div class="objective-box" style="margin-top: 30px;">
+                    <strong>📝 Exercício para fixação:</strong>
+                    Crie um middleware chamado "admin" que só permite acesso a rotas de administração (ex: <code>/api/admin/produtos</code>) se o usuário tiver <code>role='admin'</code>. Teste criando dois usuários com roles diferentes e valide no Postman.
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>✨ Material elaborado para fins didáticos — <strong>Professor Ensino Médio/Técnico</strong> | API Laravel + SQLite + JWT + Postman | Capítulo 2 ✨</p>
+        </div>
+    </div>
+</body>
+</html>
